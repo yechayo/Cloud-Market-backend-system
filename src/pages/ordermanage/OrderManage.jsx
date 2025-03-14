@@ -32,7 +32,7 @@ export default function OrderManage() {
       const token = localStorage.getItem('admin_token');
       
       // 构建请求参数
-      const params = {
+      const requestBody = {
         beginTime: undefined,
         current: pagination.current,
         endTime: undefined,
@@ -45,16 +45,18 @@ export default function OrderManage() {
       
       // 添加日期范围参数
       if (searchParams.dateRange && searchParams.dateRange.length === 2) {
-        params.beginTime = searchParams.dateRange[0]?.format('YYYY-MM-DDTHH:mm:ss.SSS[Z]');
-        params.endTime = searchParams.dateRange[1]?.format('YYYY-MM-DDTHH:mm:ss.SSS[Z]');
+        requestBody.beginTime = searchParams.dateRange[0]?.format('YYYY-MM-DDTHH:mm:ss.SSS[Z]');
+        requestBody.endTime = searchParams.dateRange[1]?.format('YYYY-MM-DDTHH:mm:ss.SSS[Z]');
       }
       
-      const response = await axios.get('http://1.117.70.79:8090/api/order/information', {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        },
-        params
-      });
+      const response = await axios.post('http://1.117.70.79:8090/api/order/information', 
+        requestBody,
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        }
+      );
 
       if (response.data.code >= 200 && response.data.code < 300) {
         setOrders(response.data.data.list || []);
@@ -158,6 +160,7 @@ export default function OrderManage() {
       '已发货': { color: 'cyan', text: '已发货' },
       '配送中': { color: 'purple', text: '配送中' },
       '已完成': { color: 'green', text: '已完成' },
+      '已成交': { color: 'green', text: '已成交' },
       '已取消': { color: 'red', text: '已取消' },
       '退款中': { color: 'orange', text: '退款中' },
       '已退款': { color: 'volcano', text: '已退款' }
@@ -179,14 +182,20 @@ export default function OrderManage() {
     },
     {
       title: '下单时间',
-      dataIndex: 'createTime',
-      key: 'createTime',
+      dataIndex: 'buyTime',
+      key: 'buyTime',
       width: 180
     },
     {
       title: '客户电话',
       dataIndex: 'phone',
       key: 'phone',
+      width: 120
+    },
+    {
+      title: '客户姓名',
+      dataIndex: 'name',
+      key: 'name',
       width: 120
     },
     {
@@ -202,12 +211,6 @@ export default function OrderManage() {
       key: 'orderStatus',
       width: 120,
       render: (status) => getStatusTag(status)
-    },
-    {
-      title: '操作人',
-      dataIndex: 'operate',
-      key: 'operate',
-      width: 120
     },
     {
       title: '操作',
@@ -278,7 +281,7 @@ export default function OrderManage() {
             <Option value="退款中">退款中</Option>
             <Option value="已退款">已退款</Option>
           </Select>
-          <Select
+          {/* <Select
             placeholder="操作人"
             value={searchParams.operate}
             onChange={(value) => handleSearchChange('operate', value)}
@@ -288,7 +291,7 @@ export default function OrderManage() {
             <Option value="系统">系统</Option>
             <Option value="用户">用户</Option>
             <Option value="管理员操作">管理员</Option>
-          </Select>
+          </Select> */}
           <RangePicker
             value={searchParams.dateRange}
             onChange={(dates) => handleSearchChange('dateRange', dates)}
@@ -327,27 +330,23 @@ export default function OrderManage() {
           <>
             <Descriptions bordered column={2}>
               <Descriptions.Item label="订单编号">{currentOrder.orderId}</Descriptions.Item>
-              <Descriptions.Item label="下单时间">{currentOrder.createTime}</Descriptions.Item>
-              <Descriptions.Item label="客户名称">{currentOrder.customerName}</Descriptions.Item>
+              <Descriptions.Item label="下单时间">{currentOrder.buyTime}</Descriptions.Item>
+              <Descriptions.Item label="客户姓名">{currentOrder.name}</Descriptions.Item>
               <Descriptions.Item label="联系电话">{currentOrder.phone}</Descriptions.Item>
-              <Descriptions.Item label="收货地址">{currentOrder.address}</Descriptions.Item>
               <Descriptions.Item label="订单状态">{getStatusTag(currentOrder.orderStatus)}</Descriptions.Item>
               <Descriptions.Item label="订单金额">¥{currentOrder.totalAmount?.toFixed(2) || '0.00'}</Descriptions.Item>
-              <Descriptions.Item label="支付方式">{currentOrder.paymentMethod}</Descriptions.Item>
-              <Descriptions.Item label="操作人">{currentOrder.operate || '系统'}</Descriptions.Item>
-              <Descriptions.Item label="备注" span={2}>{currentOrder.remark || '无'}</Descriptions.Item>
+              <Descriptions.Item label="备注" span={2}>{currentOrder.notes || '无'}</Descriptions.Item>
             </Descriptions>
 
             <h3 style={{ margin: '20px 0 10px' }}>订单商品</h3>
             <Table
               columns={[
-                { title: '商品名称', dataIndex: 'productName', key: 'productName' },
-                { title: '规格', dataIndex: 'specification', key: 'specification' },
-                { title: '单价', dataIndex: 'price', key: 'price', render: (price) => `¥${price?.toFixed(2) || '0.00'}` },
-                { title: '数量', dataIndex: 'quantity', key: 'quantity' },
-                { title: '小计', dataIndex: 'subtotal', key: 'subtotal', render: (_, record) => `¥${((record.price || 0) * (record.quantity || 0)).toFixed(2)}` }
+                { title: '商品名称', dataIndex: 'commodity_name', key: 'commodity_name' },
+                { title: '单价', dataIndex: 'current_price', key: 'current_price', render: (price) => `¥${price?.toFixed(2) || '0.00'}` },
+                { title: '数量', dataIndex: 'number', key: 'number' },
+                { title: '小计', key: 'subtotal', render: (_, record) => `¥${((record.current_price || 0) * (record.number || 0)).toFixed(2)}` }
               ]}
-              dataSource={currentOrder.items || []}
+              dataSource={currentOrder.itemsList || []}
               rowKey={(record, index) => `item-${index}`}
               pagination={false}
             />
