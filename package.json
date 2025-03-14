@@ -10,7 +10,15 @@
     "preview": "vite preview"
   },
   "dependencies": {
+<<<<<<< HEAD
     "@ant-design/icons": "^5.6.1",
+=======
+    "@ant-design/icons": "^5.3.7",
+    "antd": "^5.17.0",
+    "axios": "^1.6.8",
+    "react-router-dom": "^6.22.1",
+    "moment": "^2.30.1",
+>>>>>>> 0f3129f7f26df460e776225550751ebafb1487e3
     "@ant-design/plots": "^2.3.3",
     "antd": "^5.24.3",
     "axios": "^1.8.3",
@@ -19,7 +27,7 @@
     "react-router-dom": "^6.30.0"
   },
   "devDependencies": {
-    "@eslint/js": "^9.21.0",
+    "@types/node": "^20.11.0",
     "@types/react": "^19.0.10",
     "@types/react-dom": "^19.0.4",
     "@vitejs/plugin-react": "^4.3.4",
