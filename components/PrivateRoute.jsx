@@ -5,3 +5,4 @@ export default function PrivateRoute({ children }) {
   console.log(token);
   return token ? children : <Navigate to="/login" replace />;
 }
+

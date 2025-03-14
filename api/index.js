@@ -1,6 +1,8 @@
 import http from '../utils/http';
 
 // 广告管理相关API
+
+
 export const adAPI = {
   // 获取所有广告
   getAllAds: () => http.get('/ads/all-ads'),
