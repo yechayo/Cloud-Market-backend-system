@@ -7,7 +7,8 @@ import GoodsManage from './pages/goodsmanage/GoodsManage';
 import OrderManage from './pages/ordermanage/OrderManage';
 import StockManage from './pages/stockmanage/StockManage';
 import Dashboard from './pages/dashboard/Dashboard';
-import PrivateRoute from './components/privateroute';
+// 修正导入路径，确保与实际文件名大小写一致
+import PrivateRoute from './components/PrivateRoute';
 import AppLayout from './components/Layout';
 
 function App() {

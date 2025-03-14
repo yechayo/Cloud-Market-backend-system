@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Table, Button, Space, Input, Select, message } from 'antd';
 import { commodityAPI } from '../../api/index';
-import { data } from 'react-router-dom';
+// import { data } from 'react-router-dom';
 
 const GoodsManage = () => {
   const [commodities, setCommodities] = useState([]);

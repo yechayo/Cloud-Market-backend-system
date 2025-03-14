@@ -2,7 +2,7 @@ import { Button, Form, Input, message, Tabs } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import axios from 'axios';
-import { JavaOutlined } from '@ant-design/icons';
+// import { JavaOutlined } from '@ant-design/icons';
 
 export default function Login() {
     const navigate = useNavigate();
