@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Card, Row, Col, Statistic, Spin, message } from 'antd';
-import { Pie } from '@ant-design/plots';
+import ReactECharts from 'echarts-for-react';
 import axios from 'axios';
 
 const Dashboard = () => {
@@ -34,37 +34,84 @@ const Dashboard = () => {
   }, []);
 
   // 订单状态数据
-  const getOrderStatusData = () => {
-    if (!dashboardData) return [];
+  const getOrderStatusOption = () => {
+    if (!dashboardData) return {};
     
-    return [
-      { type: '已发货', value: dashboardData.send, percent: dashboardData.sendPercent },
-      { type: '配送中', value: dashboardData.delivery, percent: dashboardData.deliveryPercent },
-      { type: '已退款', value: dashboardData.haveRefund, percent: dashboardData.haveRefundPercent },
-      { type: '已成交', value: dashboardData.haveDeal, percent: dashboardData.haveDealPercent },
-    ];
+    return {
+      tooltip: {
+        trigger: 'item',
+        formatter: '{a} <br/>{b}: {c} ({d}%)'
+      },
+      legend: {
+        orient: 'vertical',
+        left: 10,
+        data: ['已发货', '配送中', '已退款', '已成交']
+      },
+      series: [
+        {
+          name: '订单状态',
+          type: 'pie',
+          radius: ['50%', '70%'],
+          avoidLabelOverlap: false,
+          label: {
+            show: true,
+            formatter: '{b}: {d}%'
+          },
+          emphasis: {
+            label: {
+              show: true,
+              fontSize: '16',
+              fontWeight: 'bold'
+            }
+          },
+          labelLine: {
+            show: true
+          },
+          data: [
+            { value: dashboardData.send, name: '已发货' },
+            { value: dashboardData.delivery, name: '配送中' },
+            { value: dashboardData.haveRefund, name: '已退款' },
+            { value: dashboardData.haveDeal, name: '已成交' }
+          ]
+        }
+      ]
+    };
   };
 
   // 订单处理情况
-  const getOrderProcessData = () => {
-    if (!dashboardData) return [];
+  const getOrderProcessOption = () => {
+    if (!dashboardData) return {};
     
-    return [
-      { type: '成功交易', value: dashboardData.totalDeal, percent: dashboardData.totalDeal },
-      { type: '失败交易', value: dashboardData.totalFalse, percent: dashboardData.totalFalse },
-    ];
-  };
-
-  const pieConfig = {
-    appendPadding: 10,
-    angleField: 'value',
-    colorField: 'type',
-    radius: 0.8,
-    label: {
-      type: 'outer',
-      content: '{name} {percentage}',
-    },
-    interactions: [{ type: 'pie-legend-active' }, { type: 'element-active' }],
+    return {
+      tooltip: {
+        trigger: 'item',
+        formatter: '{a} <br/>{b}: {c} ({d}%)'
+      },
+      legend: {
+        orient: 'horizontal',
+        bottom: 'bottom',
+        data: ['成功交易', '失败交易']
+      },
+      series: [
+        {
+          name: '交易情况',
+          type: 'pie',
+          radius: '55%',
+          center: ['50%', '50%'],
+          data: [
+            { value: dashboardData.totalDeal, name: '成功交易' },
+            { value: dashboardData.totalFalse, name: '失败交易' }
+          ],
+          emphasis: {
+            itemStyle: {
+              shadowBlur: 10,
+              shadowOffsetX: 0,
+              shadowColor: 'rgba(0, 0, 0, 0.5)'
+            }
+          }
+        }
+      ]
+    };
   };
 
   if (loading) {
@@ -85,7 +132,7 @@ const Dashboard = () => {
         
         <Col span={16}>
           <Card title="订单状态分布">
-            <Pie {...pieConfig} data={getOrderStatusData()} />
+            <ReactECharts option={getOrderStatusOption()} style={{ height: 300 }} />
           </Card>
         </Col>
       </Row>
@@ -93,7 +140,7 @@ const Dashboard = () => {
       <Row gutter={[16, 16]} style={{ marginTop: '16px' }}>
         <Col span={24}>
           <Card title="订单处理情况">
-            <Pie {...pieConfig} data={getOrderProcessData()} />
+            <ReactECharts option={getOrderProcessOption()} style={{ height: 300 }} />
           </Card>
         </Col>
       </Row>
